@@ -13,7 +13,7 @@ define('CLOUDINARY_SAMPLE', 'cloudinary://drupal_sample.png');
 /**
  * Url prefix of cloudinary preview image.
  */
-define('CLOUDINARY_PREVIEW_IMAGE_PREFIX', 'http://res.cloudinary.com/demo/image/upload/');
+define('CLOUDINARY_PREVIEW_IMAGE_PREFIX', 'https://res.cloudinary.com/demo/image/upload/');
 
 /**
  * Effects for effects param visible states.
@@ -33,13 +33,6 @@ function cloudinary_theme() {
     'cloudinary_crop_summary' => array(
       'variables' => array(
         'data' => NULL,
-      ),
-    ),
-    'cloudinary_image_style_preview' => array(
-      'function' => 'theme_cloudinary_image_style_preview',
-      'variables' => array(
-        'original' => NULL,
-        'preview' => NULL,
       ),
     ),
   );
@@ -68,84 +61,102 @@ function theme_cloudinary_crop_summary($variables) {
 }
 
 /**
+ * Implements hook_theme_registry_alter().
+ */
+function cloudinary_theme_registry_alter(&$theme_registry) {
+  foreach ($theme_registry['image_style_preview']['preprocess functions'] as &$function) {
+    if ($function == 'template_preprocess_image_style_preview') {
+      $function = 'cloudinary_preprocess_image_style_preview';
+      break;
+    }
+  }
+}
+
+/**
  * Returns HTML for a cloudinary preview of an image style.
  *
  * @ingroup themeable
  */
-function theme_cloudinary_image_style_preview($variables) {
+function cloudinary_preprocess_image_style_preview(&$variables) {
+  // Style information.
+  $style = $variables['style'];
+  $variables['style_id'] = $style->id();
+  $variables['style_name'] = $style->label();
+
+  // Cache bypass token.
+  $variables['cache_bypass'] = REQUEST_TIME;
+  // Get sample image path from Cloudinary demo sandbox.
+  $original = CLOUDINARY_PREVIEW_IMAGE_PREFIX . 'sample.jpg';
+  // Generate image style for provided sample image.
+  $data = cloudinary_stream_wrapper_transformation($variables['style_id'], NULL);
+  $derivative_width = $data['width'] > 0 ? $data['width'] : 160;
+  $derivative_height = $data['height'] > 0 ? $data['height'] : 160;
+  $trans = \Cloudinary::generate_transformation_string($data);
+  $preview = CLOUDINARY_PREVIEW_IMAGE_PREFIX . $trans . '/sample.jpg';
+  $variables['derivative']['rendered']['#uri'] = $preview;
+  $variables['derivative']['url'] = file_create_url($preview);
+
+  // Sample image info.
   $sample_width = 160;
   $sample_height = 160;
-  // Set up original file information.
-  $original = $variables['original'];
-  $original_image = cloudinary_stream_wrapper_remote_image_info($original);
-  if ($original_image['width'] > $original_image['height']) {
-    $original_width = min($original_image['width'], $sample_width);
-    $original_height = round($original_width / $original_image['width'] * $original_image['height']);
-  }
-  else {
-    $original_height = min($original_image['height'], $sample_height);
-    $original_width = round($original_height / $original_image['height'] * $original_image['width']);
-  }
-  $original_attributes = array_intersect_key($original_image, array('width' => '', 'height' => ''));
-  $original_attributes['style'] = 'width: ' . $original_width . 'px; height: ' . $original_height . 'px;';
-  // Set up preview file information.
-  $preview = $variables['preview'];
-  $preview_image = cloudinary_stream_wrapper_remote_image_info($preview);
-  if ($preview_image['width'] > $preview_image['height']) {
-    $preview_width = min($preview_image['width'], $sample_width);
-    $preview_height = round($preview_width / $preview_image['width'] * $preview_image['height']);
-  }
-  else {
-    $preview_height = min($preview_image['height'], $sample_height);
-    $preview_width = round($preview_height / $preview_image['height'] * $preview_image['width']);
-  }
-  $preview_attributes = array_intersect_key($preview_image, array('width' => '', 'height' => ''));
-  $preview_attributes['style'] = 'width: ' . $preview_width . 'px; height: ' . $preview_height . 'px;';
 
-  $original_image = array(
+  // Set up original file information.
+  $variables['original'] = [
+    'url' => file_create_url($original),
+    'width' => 864,
+    'height' => 576,
+  ];
+  if ($variables['original']['width'] > $variables['original']['height']) {
+    $variables['preview']['original']['width'] = min($variables['original']['width'], $sample_width);
+    $variables['preview']['original']['height'] = round($variables['preview']['original']['width'] / $variables['original']['width'] * $variables['original']['height']);
+  }
+  else {
+    $variables['preview']['original']['height'] = min($variables['original']['height'], $sample_height);
+    $variables['preview']['original']['width'] = round($variables['preview']['original']['height'] / $variables['original']['height'] * $variables['original']['width']);
+  }
+
+  // Set up derivative file information.
+  $variables['derivative'] = [
+    'url' => file_create_url($preview),
+    'width' => $derivative_width,
+    'height' => $derivative_height,
+  ];
+  if ($variables['derivative']['width'] > $variables['derivative']['height']) {
+    $variables['preview']['derivative']['width'] = min($variables['derivative']['width'], $sample_width);
+    $variables['preview']['derivative']['height'] = round($variables['preview']['derivative']['width'] / $variables['derivative']['width'] * $variables['derivative']['height']);
+  }
+  else {
+    $variables['preview']['derivative']['height'] = min($variables['derivative']['height'], $sample_height);
+    $variables['preview']['derivative']['width'] = round($variables['preview']['derivative']['height'] / $variables['derivative']['height'] * $variables['derivative']['width']);
+  }
+
+  // Build the preview of the original image.
+  $variables['original']['rendered'] = [
     '#theme' => 'image',
     '#uri' => $original,
-    '#width' => $original_width,
-    '#height' => $original_height,
-  );
-  $cloudinary_original_image = \Drupal::service('renderer')->render($original_image);
+    '#alt' => t('Sample original image'),
+    '#title' => '',
+    '#attributes' => [
+      'width' => $variables['original']['width'],
+      'height' => $variables['original']['height'],
+      'style' => 'width: ' . $variables['preview']['original']['width'] . 'px; height: ' . $variables['preview']['original']['height'] . 'px;',
+    ],
+  ];
 
-  $preview_image = array(
+  // Build the preview of the image style derivative. Timestamps are added
+  // to prevent caching of images on the client side.
+  $variables['derivative']['rendered'] = [
     '#theme' => 'image',
-    '#uri' => $preview,
-    '#width' => $preview_width,
-    '#height' => $preview_height,
-  );
-  $cloudinary_preview_image = \Drupal::service('renderer')->render($preview_image);
+    '#uri' => $variables['derivative']['url'] . '?cache_bypass=' . $variables['cache_bypass'],
+    '#alt' => t('Sample modified image'),
+    '#title' => '',
+    '#attributes' => [
+      'width' => 'auto',
+      'height' => 'auto',
+      'style' => 'width: ' . $variables['preview']['derivative']['width'] . 'px; height: ' . $variables['preview']['derivative']['height'] . 'px;',
+    ],
+  ];
 
-//  http://res.cloudinary.com/demo/image/upload/a_auto_left.auto_right.exif.hflip.ignore.vflip,b_2,bo_2px_solid_rgb:000,h_2,o_2,r_2,w_100/a_2/sample.jpg
-  $output = '<div class="image-style-preview preview clearfix">';
-  $output .= '<div class="preview-image-wrapper">';
-  $url = Url::fromUri($original);
-  $original_link = \Drupal::l(t('view actual size'), $url);
-  $output .= t('original') . ' (' . $original_link . ')';
-
-  $output .= '<div class="preview-image original-image" style="' . $original_attributes['style'] . '">';
-  $output .= '<a href="' . $original . '">' . $cloudinary_original_image . '</a>';
-  $output .= '<div class="height" style="height: ' . $original_height . 'px"><span>' . $original_image['#height'] . 'px</span></div>';
-  $output .= '<div class="width" style="width: ' . $original_width . 'px"><span>' . $original_image['#width'] . 'px</span></div>';
-  $output .= '</div>';
-  $output .= '</div>';
-  // Build the preview of the image style.
-  $output .= '<div class="preview-image-wrapper">';
-  $url = Url::fromUri($preview);
-  $preview_link = \Drupal::l(t('view actual size'), $url);
-  $output .= t('transformation') . ' (' . $preview_link . ')';
-
-  $output .= '<div class="preview-image modified-image" style="' . $preview_attributes['style'] . '">';
-  $output .= '<a href="' . $preview . '">' . $cloudinary_preview_image . '</a>';
-  $output .= '<div class="height" style="height: ' . $preview_height . 'px"><span>' . $preview_image['#height'] . 'px</span></div>';
-  $output .= '<div class="width" style="width: ' . $preview_width . 'px"><span>' . $preview_image['#width'] . 'px</span></div>';
-  $output .= '</div>';
-  $output .= '</div>';
-  $output .= '</div>';
-
-  return $output;
 }
 
 /**
@@ -349,55 +360,6 @@ function cloudinary_preprocess_transformation($data) {
 
   return $data;
 }
-
-/**
- * Upload sample image to cloudinary if no exist.
- *
- * Replace image_style_preview_image to cloudinary sample image.
- */
-function cloudinary_upload_sample() {
-  if (!file_exists(CLOUDINARY_SAMPLE)) {
-    if (file_save_data(file_get_contents(drupal_get_path('module', 'image') . '/sample.png'), CLOUDINARY_SAMPLE)) {
-      $config = \Drupal::service('config.factory')->getEditable('image.settings');
-      $config->set('image.settings.preview_image', CLOUDINARY_SAMPLE);
-      $config->save();
-    }
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter() for image_style_form().
- *
- * Alters the image style form.
- *
- * @see image_style_form()
- */
-function cloudinary_form_image_style_form_alter(&$form, &$from_state) {
-  // Prepare and upload sample image.
-  cloudinary_upload_sample();
-  // Remove cache flag.
-  $form['preview']['#markup'] = preg_replace('#\?(cache_bypass=)?\d{10}#', '', $form['preview']['#markup']);
-}
-
-///**
-// * Implements hook_form_FORM_ID_alter() for image_effect_form().
-// *
-// * Alters the image style form.
-// *
-// * @see image_effect_form()
-// */
-//function cloudinary_form_image_effect_form_alter(&$form, &$from_state) {
-//  if (!isset($form['data']['cloudinary'])) {
-//    return;
-//  }
-
-//  if (isset($form['#submit']) && !empty($form['#submit'])) {
-//    array_unshift($form['#submit'], 'cloudinary_form_image_effect_submit');
-//  }
-//  else {
-//    $form['#submit'] = array('cloudinary_form_image_effect_submit');
-//  }
-//}
 
 /**
  * Prepare cloudinary image effect before save.
