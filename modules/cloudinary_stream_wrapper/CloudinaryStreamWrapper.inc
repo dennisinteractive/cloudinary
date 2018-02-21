@@ -117,7 +117,7 @@ class CloudinaryStreamWrapper implements DrupalStreamWrapperInterface {
       $path = implode('/', $paths);
       $ori_uri = $scheme . '://' . $path;
       $public_id = $this->getPublicId($ori_uri);
-      $resource = cloudinary_stream_wrapper_resource($public_id, array('resource_tye' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE));
+      $resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE));
 
       if (!$resource || $resource['mode'] != CLOUDINARY_STREAM_WRAPPER_FILE) {
         return FALSE;
