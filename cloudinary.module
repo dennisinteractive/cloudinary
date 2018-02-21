@@ -29,16 +29,14 @@ define('CLOUDINARY_VISIBLE_STATES_CROP', 'fill,crop,thumb,pad,lfill,lpad,mpad');
  * Implements hook_theme().
  */
 function cloudinary_theme() {
-  return array(
-    'cloudinary_crop_summary' => array(
-      'variables' => array(
+  return [
+    'cloudinary_crop_summary' => [
+      'variables' => [
         'data' => NULL,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
-
-use Drupal\Core\Url;
 
 /**
  * Theme function for Cloudinary effect.
@@ -47,7 +45,7 @@ function theme_cloudinary_crop_summary($variables) {
   $attributes = 'None';
   $data = cloudinary_preprocess_transformation($variables['data']);
   if (!empty($data)) {
-    $attribute = array();
+    $attribute = [];
     foreach ($data as $key => $value) {
       if (is_array($value)) {
         $value = implode('.', array_filter($value));
@@ -57,7 +55,7 @@ function theme_cloudinary_crop_summary($variables) {
     $attributes = implode(', ', $attribute);
   }
 
-  return t('Image will have cloudinary effects applied with attributes : @attributes', array('@attributes' => $attributes));
+  return t('Image will have cloudinary effects applied with attributes : @attributes', ['@attributes' => $attributes]);
 }
 
 /**
@@ -165,38 +163,38 @@ function cloudinary_preprocess_image_style_preview(&$variables) {
 function cloudinary_cloudinary_stream_wrapper_transformation() {
   $path = drupal_get_path('module', 'cloudinary');
 
-  return array(
-    'cloudinary_crop' => array(
+  return [
+    'cloudinary_crop' => [
       'title' => t('Cloudinary crop'),
       'callback' => 'cloudinary_transformation_cloudinary_crop',
       'file' => $path . '/includes/cloudinary.transformation.cloudinary.inc',
-    ),
-    'image_crop' => array(
+    ],
+    'image_crop' => [
       'title' => t('Crop'),
       'callback' => 'cloudinary_transformation_image_crop',
       'file' => $path . '/includes/cloudinary.transformation.drupal.inc',
-    ),
-    'image_desaturate' => array(
+    ],
+    'image_desaturate' => [
       'title' => t('Desaturate'),
       'callback' => 'cloudinary_transformation_image_desaturate',
-    ),
-    'image_resize' => array(
+    ],
+    'image_resize' => [
       'title' => t('Resize'),
       'callback' => 'cloudinary_transformation_image_resize',
-    ),
-    'image_rotate' => array(
+    ],
+    'image_rotate' => [
       'title' => t('Rotate'),
       'callback' => 'cloudinary_transformation_image_rotate',
-    ),
-    'image_scale' => array(
+    ],
+    'image_scale' => [
       'title' => t('Scale'),
       'callback' => 'cloudinary_transformation_image_scale',
-    ),
-    'image_scale_and_crop' => array(
+    ],
+    'image_scale_and_crop' => [
       'title' => t('Scale and crop'),
       'callback' => 'cloudinary_transformation_image_scale_and_crop',
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -218,7 +216,7 @@ function cloudinary_transformation_image($data, $extra = NULL) {
     unset($data['type']);
   }
 
-  return array('type' => $type, 'data' => $data);
+  return ['type' => $type, 'data' => $data];
 }
 
 /**
@@ -276,15 +274,15 @@ function cloudinary_crop_form_preview($data) {
     $preview = CLOUDINARY_PREVIEW_IMAGE_PREFIX . trim($trans, '/') . '/' . $filename;
   }
 
-  $styles = array('original' => $original, 'preview' => $preview);
+  $styles = ['original' => $original, 'preview' => $preview];
   // @FIXME
-// theme() has been renamed to _theme() and should NEVER be called directly.
-// Calling _theme() directly can alter the expected output and potentially
-// introduce security issues (see https://www.drupal.org/node/2195739). You
-// should use renderable arrays instead.
-// 
-// 
-// @see https://www.drupal.org/node/2195739
+  // theme() has been renamed to _theme() and should NEVER be called directly.
+  // Calling _theme() directly can alter the expected output and potentially
+  // introduce security issues (see https://www.drupal.org/node/2195739). You
+  // should use renderable arrays instead.
+  //
+  //
+  // @see https://www.drupal.org/node/2195739
   return _theme('cloudinary_image_style_preview', $styles);
 
 }
@@ -309,8 +307,8 @@ function cloudinary_prepare_transformation($data, $only = TRUE) {
         unset($data['angles']);
       }
 
-      $new_data = array($data);
-      $new_data[] = array('angle' => $angle);
+      $new_data = [$data];
+      $new_data[] = ['angle' => $angle];
 
       if ($only !== TRUE) {
         $new_data['multiple'] = TRUE;
@@ -371,7 +369,7 @@ function cloudinary_from_image_effect_prepare($data) {
   }
   // Unset angles if automatic_rotation unchecked.
   if (empty($data['automatic_rotation'])) {
-    $data['angles'] = array();
+    $data['angles'] = [];
   }
   // Unset effects_param if effect doesn't have param.
   $effect_param_effects = explode(',', CLOUDINARY_VISIBLE_STATES_EFFECT);
@@ -411,7 +409,7 @@ function cloudinary_value_get($data, $key, $default = '') {
  * Build options for corp modes.
  */
 function _cloudinary_options_crop($key = NULL) {
-  $data = array(
+  $data = [
     '' => t('None'),
     'scale' => t('Scale'),
     'limit' => t('Limit'),
@@ -426,7 +424,7 @@ function _cloudinary_options_crop($key = NULL) {
     'mpad' => t('Pad (No Scale)'),
     'imagga_crop' => t('Imagga crop'),
     'imagga_scale' => t('Imagga scale'),
-  );
+  ];
 
   if (!is_null($key) && isset($data[$key])) {
     return $data[$key];
@@ -439,7 +437,7 @@ function _cloudinary_options_crop($key = NULL) {
  * Build options for gravity.
  */
 function _cloudinary_options_gravity($key = NULL) {
-  $data = array(
+  $data = [
     '' => t('None'),
     'face' => t('Face'),
     'faces' => t('Faces'),
@@ -459,7 +457,7 @@ function _cloudinary_options_gravity($key = NULL) {
     'rek_face' => t('ReKognition: Face'),
     'rek_faces' => t('ReKognition: Faces'),
     'rek_eyes' => t('ReKognition: Eyes'),
-  );
+  ];
 
   if (!is_null($key) && isset($data[$key])) {
     return $data[$key];
@@ -472,14 +470,14 @@ function _cloudinary_options_gravity($key = NULL) {
  * Build options for angles.
  */
 function _cloudinary_options_angles($key = NULL) {
-  $data = array(
+  $data = [
     'auto_left' => t('Auto left'),
     'auto_right' => t('Auto right'),
     'exif' => t('Use EXIF data'),
     'hflip' => t('Horizontal flip'),
     'ignore' => t('Ignore'),
     'vflip' => t('Vertical flip'),
-  );
+  ];
 
   if (!is_null($key) && isset($data[$key])) {
     return $data[$key];
@@ -492,7 +490,7 @@ function _cloudinary_options_angles($key = NULL) {
  * Build options for effect.
  */
 function _cloudinary_options_effect($key = NULL) {
-  $data = array(
+  $data = [
     '' => t('None'),
     'grayscale' => t('Grayscale'),
     'blackwhite' => t('Blackwhite'),
@@ -534,7 +532,7 @@ function _cloudinary_options_effect($key = NULL) {
     'rek_redeye' => t('ReKognition: Remove red eyes'),
     'overlay' => t('Overlay'),
     'gamma' => t('Gamma'),
-  );
+  ];
 
   if (!is_null($key) && isset($data[$key])) {
     return $data[$key];
@@ -547,10 +545,10 @@ function _cloudinary_options_effect($key = NULL) {
  * Build group conditions of visible states.
  */
 function _cloudinary_build_visible_states($visible) {
-  $data = array();
+  $data = [];
   $datas = explode(',', $visible);
   foreach ($datas as $value) {
-    $data[] = array('value' => $value);
+    $data[] = ['value' => $value];
   }
   return $data;
 }
