@@ -141,7 +141,6 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * Load file or directory resource for Cloudinary.
    */
   protected function loadResource($uri, $reset = TRUE) {
-    $uri = str_replace(' ', '%20', $uri);
     // Process image style.
     $paths = $this->imageStylePaths($uri);
     if (!empty($paths)) {
