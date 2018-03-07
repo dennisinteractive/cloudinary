@@ -1,5 +1,5 @@
 services:
-  init_subscriber:
+  cloudinary_sdk.init_subscriber:
     class: Drupal\cloudinary_sdk\EventSubscriber\InitSubscriber
     tags:
       -
