@@ -8,7 +8,7 @@
 /**
  * Required minimum version number of "CLOUDINARY SDK for PHP".
  */
-define('CLOUDINARY_SDK_MINIMUM_VERSION', '1.0.7');
+define('CLOUDINARY_SDK_MINIMUM_VERSION', '1.9.0');
 
 /**
  * Flag for dealing with "CLOUDINARY SDK for PHP" not loaded.
@@ -38,13 +38,22 @@ function cloudinary_sdk_libraries_info() {
       'version arguments' => array(
         'file' => 'src/Cloudinary.php',
         'pattern' => '/const VERSION = "(.*)";/',
-        'lines' => 13,
+        'lines' => 20,
       ),
       'files' => array(
         'php' => array(
           'Cloudinary.php',
           'Uploader.php',
           'Api.php',
+          'Api/Error.php',
+          'Api/AlreadyExists.php',
+          'Api/AuthorizationRequired.php',
+          'Api/BadRequest.php',
+          'Api/GeneralError.php',
+          'Api/NotAllowed.php',
+          'Api/NotFound.php',
+          'Api/RateLimited.php',
+          'Api/Response.php',
         ),
       ),
       'callbacks' => array(
