@@ -1,0 +1,19 @@
+***************
+*** 206,213 ****
+        // Expected result.
+        $data = $request->getBody();
+      }
+-     catch (\Exception $e) {
+-       watchdog_exception('cloudinary_stream_wrapper', $e);
+      }
+  
+      return $data;
+--- 206,213 ----
+        // Expected result.
+        $data = $request->getBody();
+      }
++     catch (RequestException $e) {
++       watchdog_exception('cloudinary_stream_wrapper', $e->getMessage());
+      }
+  
+      return $data;

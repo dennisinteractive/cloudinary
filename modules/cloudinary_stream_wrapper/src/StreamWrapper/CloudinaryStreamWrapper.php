@@ -207,7 +207,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
       $data = $request->getBody();
     }
     catch (\Exception $e) {
-      watchdog_exception('cloudinary_stream_wrapper', $e->getMessage());
+      watchdog_exception('cloudinary_stream_wrapper', $e);
     }
 
     return $data;
