@@ -177,8 +177,24 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
         $style = ImageStyle::load($style_name);
         $style->transformDimensions($dimensions, $ori_uri);
         $resource = array_merge($resource, $dimensions);*/
-        $data['sign_url'] = true;
+
+        $data['sign_url'] = TRUE;
+
+        // As the Cloudinary::cloudinary_url method indicates, it is
+        // destructive with the options. We want to use the same data later.
+        $original_data = $data;
+
         $resource['url'] = cloudinary_url_internal($path, $data);
+
+        /*
+         * In Cloudinary PHP library will decide if secure must be used
+         * based on the parameters in your server. We always want the secure_url
+         * to be HTTPS so we force secure to TRUE as $data is not used anymore
+         * after this.
+         */
+        $data = $original_data;
+        $data['secure'] = TRUE;
+        $resource['secure_url'] = cloudinary_url_internal($path, $data);
       }
 
       $this->resource = $resource;
@@ -341,12 +357,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
       return FALSE;
     }
 
-    /*if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
-      || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
-      return $resource['secure_url'];
-    }*/
-
-    return $resource['url'];
+    return $resource['secure_url'];
   }
 
   /**

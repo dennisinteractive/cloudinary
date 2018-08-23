@@ -148,15 +148,14 @@ function cloudinary_stream_wrapper_form_cloudinary_sdk_settings_alter(&$form, $f
       '#description' => t('You can enable more stream wrappers for Cloudinary with root folders.'),
     );
 
-    // @FIXME
-    // Could not extract the default value because it is either indeterminate, or
-    // not scalar. You'll need to provide a default value in
-    // config/install/cloudinary_sdk.settings.yml and config/schema/cloudinary_stream_wrapper.schema.yml.
+    $config_value = \Drupal::config('cloudinary_sdk.settings')->get('cloudinary_stream_wrapper_folders');
+    $default_value = is_array($config_value) && !empty($config_value) ? $config_value : [];
+
     $form['folders']['cloudinary_stream_wrapper_folders'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Cloudinary scheme with root folder'),
       '#options' => $folders,
-      '#default_value' => \Drupal::config('cloudinary_sdk.settings')->get('cloudinary_stream_wrapper_folders'),
+      '#default_value' => $default_value,
     );
   }
 }
