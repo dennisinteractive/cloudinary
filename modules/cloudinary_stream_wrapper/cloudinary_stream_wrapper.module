@@ -134,6 +134,10 @@ function cloudinary_stream_wrapper_form_cloudinary_sdk_settings_alter(&$form, $f
 
   $root_folders = cloudinary_stream_wrapper_load_resource('');
 
+  /**
+   * Issue #2992506 by otrolopezmas, lquessenberry: Cloudinary Stream Wrapper - Non existent default value for folder displays a warning
+   */
+
   if (!empty($root_folders['folders'])) {
     $folders = array();
     foreach ($root_folders['folders'] as $folder) {
