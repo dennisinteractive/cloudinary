@@ -194,6 +194,11 @@ function cloudinary_cloudinary_stream_wrapper_transformation() {
       'title' => t('Scale and crop'),
       'callback' => 'cloudinary_transformation_image_scale_and_crop',
     ],
+    'focal_point_scale_and_crop' => [
+      'title' => t('Focal Point Scale and Crop'),
+      'callback' => 'cloudinary_transformation_image_scale_and_crop',
+      'file' => $path . '/includes/cloudinary.transformation.drupal.inc',
+    ],
   ];
 }
 
