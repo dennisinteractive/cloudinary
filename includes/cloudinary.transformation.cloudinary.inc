@@ -11,11 +11,13 @@
 function cloudinary_transformation_cloudinary_crop($effect, $exist_effect, $resource)
 {
     $data = cloudinary_prepare_transformation($effect['data'], false);
+    /**
+     * We check to see if a crop value has been set in the effect array and if so we set it to the $crop variable.
+     */
     if ($effect['data']['crop'] != null) {
         $crop = $effect['data']['crop'];
-    }
-    else {
-      $crop = null;
+    } else {
+        $crop = null;
     }
     if (isset($data['multiple'])) {
         unset($data['multiple']);
