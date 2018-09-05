@@ -86,6 +86,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
       'border_width' => NULL,
       'border_color' => NULL,
       'background' => NULL,
+      'random' => FALSE,
     );
   }
 
