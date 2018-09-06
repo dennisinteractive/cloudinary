@@ -78,6 +78,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
       'y' => NULL,
       'radius' => NULL,
       'angle' => NULL,
+      'angels' => [],
       'automatic_rotation' => NULL,
       'angles' => NULL,
       'effect' => NULL,
