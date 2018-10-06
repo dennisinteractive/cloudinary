@@ -105,6 +105,10 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
     // Check whether folder creation is enabled.
     $config = \Drupal::config('cloudinary_sdk.settings');
     $this->autoCreateFolder = $config->get('cloudinary_stream_wrapper_enable_api_folder_creation', FALSE);
+    if (!\Cloudinary::config()) {
+      $cloudinaryConfig = cloudinary_sdk_config_load();
+      \Cloudinary::config($cloudinaryConfig);
+    }
   }
 
   /**
