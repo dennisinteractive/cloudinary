@@ -12,5 +12,6 @@ function cloudinary_stream_wrapper_uninstall() {
   // Remove config.
   $config = \Drupal::configFactory()->getEditable('cloudinary.settings');
   $config->clear('cloudinary_stream_wrapper_folders');
+  $config->clear('cloudinary_stream_wrapper_logging');
   $config->save();
 }
