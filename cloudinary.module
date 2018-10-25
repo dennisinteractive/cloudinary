@@ -87,8 +87,12 @@ function cloudinary_preprocess_image_style_preview(&$variables) {
   $original = CLOUDINARY_PREVIEW_IMAGE_PREFIX . 'sample.jpg';
   // Generate image style for provided sample image.
   $data = cloudinary_stream_wrapper_transformation($variables['style_id'], NULL);
-  $derivative_width = $data['width'] > 0 ? $data['width'] : 160;
-  $derivative_height = $data['height'] > 0 ? $data['height'] : 160;
+  $derivative_width = !empty($data['width']) && ($data['width'] > 0) ? $data['width'] : 160;
+  $derivative_height = !empty($data['height']) && ($data['height'] > 0) ? $data['height'] : 160;
+  if (empty($data)) {
+    $data = [];
+  }
+
   $trans = \Cloudinary::generate_transformation_string($data);
   $preview = CLOUDINARY_PREVIEW_IMAGE_PREFIX . $trans . '/sample.jpg';
   $variables['derivative']['rendered']['#uri'] = $preview;
