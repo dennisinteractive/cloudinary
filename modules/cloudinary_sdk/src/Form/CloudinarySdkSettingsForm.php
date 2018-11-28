@@ -61,7 +61,7 @@ class CloudinarySdkSettingsForm extends ConfigFormBase {
       '#title' => t('API Settings'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-      '#description' => t('In order to check the validity of the API, system will be auto ping your Cloudinary account after change API settings.'),
+      '#description' => t('You should enable "Auto-create folders" on cloudinary account. In order to check the validity of the API, system will be auto ping your Cloudinary account after change API settings.'),
     ];
 
     $form['settings']['cloudinary_sdk_cloud_name'] = [

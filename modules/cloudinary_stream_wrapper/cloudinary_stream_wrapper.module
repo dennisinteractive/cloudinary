@@ -128,13 +128,6 @@ function cloudinary_stream_wrapper_form_cloudinary_sdk_settings_alter(&$form, $f
   // Get Cloudinary SDK configs.
   $configs = \Drupal::config('cloudinary_sdk.settings');
 
-  $form['settings']['cloudinary_stream_wrapper_enable_api_folder_creation'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable folder API creation.'),
-    '#default_value' => (bool) $configs->get('cloudinary_stream_wrapper_enable_api_folder_creation'),
-    '#description' => t('Enabling of "Auto-create folders" on cloudinary account is highly recommended. In case "Auto-create folders" is disabled - use this checkbox, but note: this option will increase file upload time.'),
-  );
-
   $form['settings']['cloudinary_stream_wrapper_logging'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable error logging.'),

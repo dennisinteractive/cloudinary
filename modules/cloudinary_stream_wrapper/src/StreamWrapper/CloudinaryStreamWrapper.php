@@ -68,11 +68,6 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
   protected $resource = NULL;
 
   /**
-   * Boolean indicating whether do we need to create folders.
-   */
-  protected $autoCreateFolder = FALSE;
-
-  /**
    * Returns the type of stream wrapper.
    *
    * @return int
@@ -102,9 +97,6 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * Load Cloudinary PHP SDK & initialize Cloudinary configuration.
    */
   public function __construct() {
-    // Check whether folder creation is enabled.
-    $config = \Drupal::config('cloudinary_sdk.settings');
-    $this->autoCreateFolder = $config->get('cloudinary_stream_wrapper_enable_api_folder_creation', FALSE);
     if (!\Cloudinary::config()) {
       $cloudinaryConfig = cloudinary_sdk_config_load();
       \Cloudinary::config($cloudinaryConfig);
@@ -236,33 +228,14 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
   /**
    * Get file status.
    *
-   * @return array
+   * @return bool|array
    *   An array with file status, or FALSE in case of an error - see fstat()
    *   for a description of this array.
    *
    * @see http://php.net/manual/en/streamwrapper.stream-stat.php
    */
   protected function stat() {
-    if ($this->autoCreateFolder) {
-      $resource = $this->loadResource($this->uri);
-    }
-    else {
-      // Folders will be automatically created by Cloudinary,
-      // so even if folder doesn't exists return dummy array as a resource.
-      // Check whether we are looking for a folder.
-      $path_info = pathinfo($this->uri);
-      if (!isset($path_info['extension'])) {
-        $resource = array(
-          'mode' => 16895,
-          'bytes' => 0,
-          'timestamp' => 0,
-        );
-      }
-      else {
-        $resource = $this->loadResource($this->uri);
-      }
-    }
-
+    $resource = $this->loadResource($this->uri);
     if (!$resource) {
       return FALSE;
     }
@@ -883,17 +856,14 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * @see http://php.net/manual/streamwrapper.mkdir.php
    */
   public function mkdir($uri, $mode, $options) {
-    if ($this->autoCreateFolder) {
-      $resource = $this->loadResource($uri);
+    $resource = $this->loadResource($uri);
 
-      if ($resource) {
-        return TRUE;
-      }
-      $public_id = $this->getPublicId($uri);
-
-      return cloudinary_stream_wrapper_create_folder($public_id);
+    if (!empty($resource)) {
+      return TRUE;
     }
-    return TRUE;
+    $public_id = $this->getPublicId($uri);
+
+    return cloudinary_stream_wrapper_create_folder($public_id);
   }
 
   /**

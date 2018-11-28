@@ -15,3 +15,13 @@ function cloudinary_stream_wrapper_uninstall() {
   $config->clear('cloudinary_stream_wrapper_logging');
   $config->save();
 }
+
+/**
+ * Remove cloudinary_stream_wrapper_enable_api_folder_creation config.
+ */
+function cloudinary_stream_wrapper_update_8001() {
+  // Remove config.
+  $config = \Drupal::configFactory()->getEditable('cloudinary_sdk.settings');
+  $config->clear('cloudinary_stream_wrapper_enable_api_folder_creation');
+  $config->save();
+}
