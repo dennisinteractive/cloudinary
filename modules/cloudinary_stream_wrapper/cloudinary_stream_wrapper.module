@@ -326,6 +326,7 @@ function cloudinary_stream_wrapper_resource_file_structure($resource) {
     'url' => '',
     'secure_url' => '',
     'tags' => '',
+    'context' => '',
   );
 
   $resource = array_intersect_key($resource, $keys);
