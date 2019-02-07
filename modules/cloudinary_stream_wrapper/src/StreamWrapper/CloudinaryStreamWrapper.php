@@ -180,8 +180,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
         // destructive with the options. We want to use the same data later.
         $original_data = $data;
 
-        $resource['url'] = cloudinary_url_internal($path, $data);
-
+        $resource['url'] = str_replace(',', '%2C', cloudinary_url_internal($path, $data));
         /*
          * In Cloudinary PHP library will decide if secure must be used
          * based on the parameters in your server. We always want the secure_url
@@ -190,7 +189,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
          */
         $data = $original_data;
         $data['secure'] = TRUE;
-        $resource['secure_url'] = cloudinary_url_internal($path, $data);
+        $resource['secure_url'] = str_replace(',', '%2C', cloudinary_url_internal($path, $data));
       }
 
       $this->resource = $resource;
