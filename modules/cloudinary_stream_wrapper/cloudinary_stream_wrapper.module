@@ -76,42 +76,6 @@ function cloudinary_stream_wrapper_help($path, $arg) {
 }
 
 /**
- * Implements hook_stream_wrappers().
- */
-function cloudinary_stream_wrapper_stream_wrappers() {
-  // Make sure Cloudinary SDK installed.
-  $status = cloudinary_sdk_check();
-
-  if ($status != CLOUDINARY_SDK_LOADED) {
-    return;
-  }
-
-  $base = array(
-    'name' => t('Cloudinary'),
-    'class' => 'CloudinaryStreamWrapper',
-    'description' => t('Stream wrapper to access Cloudinary files with read or write method.'),
-    'type' => STREAM_WRAPPERS_WRITE_VISIBLE,
-  );
-
-  $wrappers = array();
-  $wrappers['cloudinary'] = $base;
-
-  // @FIXME
-  // Could not extract the default value because it is either indeterminate, or
-  // not scalar. You'll need to provide a default value in
-  // config/install/cloudinary_sdk.settings.yml and config/schema/cloudinary_stream_wrapper.schema.yml.
-  $folders = array_filter(\Drupal::config('cloudinary_sdk.settings')->get('cloudinary_stream_wrapper_folders'));
-  if (!empty($folders)) {
-    foreach ($folders as $folder) {
-      $wrappers['cloudinary.' . $folder] = $base;
-      $wrappers['cloudinary.' . $folder]['name'] .= ' (/' . $folder . ')';
-    }
-  }
-
-  return $wrappers;
-}
-
-/**
  * Implements hook_form_FORM_ID_alter() for cloudinary_sdk_settings().
  *
  * Alters the setting form for Cloudinary settings.
