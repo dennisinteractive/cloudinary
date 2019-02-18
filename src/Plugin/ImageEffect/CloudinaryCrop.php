@@ -92,6 +92,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
       'degrees' => NULL,
       'default_image' => NULL,
       'quality' => NULL,
+      'fetch_format' => NULL,
     );
   }
 
@@ -357,7 +358,16 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
       '#attributes' => array('class' => array('quality')),
     );
 
-    
+    $form['cloudinary']['more']['one']['fetch_format'] = array(
+      '#type' => 'textfield',
+      '#parents' => array('data', 'fetch_format'),
+      '#title' => t('Fetch format'),
+      '#default_value' => $this->configuration['fetch_format'],
+      '#size' => 15,
+      '#maxlength' => 15,
+      '#attributes' => array('class' => array('fetch_format')),
+    );
+
     return $form;
   }
 
@@ -438,6 +448,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
     $this->configuration['background'] = $form_state->getValue('background');
     $this->configuration['default_image'] = $form_state->getValue('default_image');
     $this->configuration['quality'] = $form_state->getValue('quality');
+    $this->configuration['fetch_format'] = $form_state->getValue('fetch_format');
     /* Maybe put ignore proportion in here as a Y/N or boolean */
   }
 
