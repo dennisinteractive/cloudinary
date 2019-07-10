@@ -29,3 +29,11 @@ function cloudinary_transformation_cloudinary_crop($effect, $exist_effect, $reso
     }
     return cloudinary_transformation_image($data, $crop);
 }
+
+/**
+ * Apply named transformation to an image.
+ */
+function cloudinary_transformation_cloudinary_named_transformation($effect, $exist_effect, $resource)
+{
+  return cloudinary_transformation_image($effect['data']);
+}

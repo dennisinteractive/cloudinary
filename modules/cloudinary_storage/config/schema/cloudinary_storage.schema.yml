@@ -1,6 +1,7 @@
 cloudinary_storage.settings:
-  type: mapping
-  label: Settings
+  type: config_object
+  label: 'Cloudinary Storage Settings'
   mapping:
     cloudinary_storage_default:
+      label: "Cloudinary Storage Backend"
       type: string

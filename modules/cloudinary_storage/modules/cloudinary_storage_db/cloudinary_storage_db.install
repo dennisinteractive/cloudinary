@@ -42,7 +42,7 @@ function cloudinary_storage_db_schema() {
         'not null' => FALSE,
       ),
     ),
-    'primary key' => array(array('public_id', 100)),
+    'primary key' => array(array('public_id', 191)),
   );
 
   return $schema;
