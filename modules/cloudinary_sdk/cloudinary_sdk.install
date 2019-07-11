@@ -85,4 +85,6 @@ function cloudinary_sdk_update_8001() {
     $state->set($name, $config->get($name));
     $config->clear($name);
   }
+  $config->save(TRUE);
 }
+
