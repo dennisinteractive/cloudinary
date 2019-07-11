@@ -3,7 +3,7 @@
 namespace Drupal\cloudinary_sdk\Form;
 
 use Cloudinary\Api;
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\cloudinary_sdk\CloudinarySdkConstantsInterface;
 
@@ -12,7 +12,7 @@ use Drupal\cloudinary_sdk\CloudinarySdkConstantsInterface;
  *
  * @package Drupal\cloudinary_sdk\Form
  */
-class CloudinarySdkSettingsForm extends ConfigFormBase {
+class CloudinarySdkSettingsForm extends FormBase {
 
   /**
    * {@inheritdoc}
@@ -24,15 +24,9 @@ class CloudinarySdkSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
-    return ['cloudinary_sdk.settings'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('cloudinary_sdk.settings');
+    $state = \Drupal::getContainer()->get('state');
+
     // Make sure Cloudinary SDK installed.
     // If not, display messages and disable API settings.
     list($status, $version, $error_message) = cloudinary_sdk_check(TRUE);
@@ -68,7 +62,7 @@ class CloudinarySdkSettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Cloud name'),
       '#required' => TRUE,
-      '#default_value' => $config->get('cloudinary_sdk_cloud_name'),
+      '#default_value' => $state->get('cloudinary_sdk_cloud_name'),
       '#description' => t('Cloud name of Cloudinary.'),
       '#disabled' => $disabled,
     ];
@@ -77,7 +71,7 @@ class CloudinarySdkSettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('API key'),
       '#required' => TRUE,
-      '#default_value' => $config->get('cloudinary_sdk_api_key'),
+      '#default_value' => $state->get('cloudinary_sdk_api_key'),
       '#description' => t('API key of Cloudinary.'),
       '#disabled' => $disabled,
     ];
@@ -86,19 +80,25 @@ class CloudinarySdkSettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('API secret'),
       '#required' => TRUE,
-      '#default_value' => $config->get('cloudinary_sdk_api_secret'),
+      '#default_value' => $state->get('cloudinary_sdk_api_secret'),
       '#description' => t('API secret of Cloudinary.'),
       '#disabled' => $disabled,
     ];
 
-    return parent::buildForm($form, $form_state);
+    $form['save'] = array(
+      '#type' => 'submit',
+      '#value' => $this->t('Save'),
+      '#weight' => 10,
+    );
+
+    return $form;
   }
 
   /**
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('cloudinary_sdk.settings');
+    $state = \Drupal::getContainer()->get('state');
     $cloud_name = trim($form_state->getValue(['cloudinary_sdk_cloud_name']));
     $api_key = trim($form_state->getValue(['cloudinary_sdk_api_key']));
     $api_secret = trim($form_state->getValue(['cloudinary_sdk_api_secret']));
@@ -106,9 +106,9 @@ class CloudinarySdkSettingsForm extends ConfigFormBase {
     // Validate the API settings with ping.
     if ($cloud_name && $api_key && $api_secret) {
       $key = $cloud_name . $api_key . $api_secret;
-      $old_key = $config->get('cloudinary_sdk_cloud_name');
-      $old_key .= $config->get('cloudinary_sdk_api_key');
-      $old_key .= $config->get('cloudinary_sdk_api_secret');
+      $old_key = $state->get('cloudinary_sdk_cloud_name');
+      $old_key .= $state->get('cloudinary_sdk_api_key');
+      $old_key .= $state->get('cloudinary_sdk_api_secret');
 
       // Return if no changes.
       if ($key == $old_key) {
@@ -139,26 +139,32 @@ class CloudinarySdkSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('cloudinary_sdk.settings');
+    $state_names = [
+      'cloudinary_sdk_cloud_name',
+      'cloudinary_sdk_api_key',
+      'cloudinary_sdk_api_secret'
+    ];
+    $config = \Drupal::configFactory()->getEditable('cloudinary_sdk.settings');
     $values = $form_state->getValues();
     foreach ($values as $field => $value) {
-      if (!in_array($field, [
+      if (!in_array($field, array_merge($state_names, [
         'op',
         'submit',
         'form_id',
         'form_token',
         'form_build_id',
-      ])) {
+      ]))) {
+        debug($field);
+        debug(($value));
         $config->set(str_replace('.', '_', $field), $value);
       }
     }
     $config->save();
 
-    if (method_exists($this, '_submitForm')) {
-      $this->_submitForm($form, $form_state);
+    $state = \Drupal::getContainer()->get('state');
+    foreach ($state_names as $name) {
+      $state->set($name, $form_state->getValue($name));
     }
-
-    parent::submitForm($form, $form_state);
   }
 
 }

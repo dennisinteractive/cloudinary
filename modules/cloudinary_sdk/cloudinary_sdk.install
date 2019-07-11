@@ -69,3 +69,20 @@ function cloudinary_sdk_requirements($phase) {
 
   return $requirements;
 }
+
+/**
+ * Converts existing configuration into states.
+ */
+function cloudinary_sdk_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('cloudinary_sdk.settings');
+  $state = \Drupal::getContainer()->get('state');
+  $state_names = [
+    'cloudinary_sdk_cloud_name',
+    'cloudinary_sdk_api_key',
+    'cloudinary_sdk_api_secret'
+  ];
+  foreach ($state_names as $name) {
+    $state->set($name, $config->get($name));
+    $config->clear($name);
+  }
+}
