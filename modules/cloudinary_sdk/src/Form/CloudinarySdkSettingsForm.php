@@ -154,8 +154,6 @@ class CloudinarySdkSettingsForm extends FormBase {
         'form_token',
         'form_build_id',
       ]))) {
-        debug($field);
-        debug(($value));
         $config->set(str_replace('.', '_', $field), $value);
       }
     }
