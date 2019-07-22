@@ -137,6 +137,11 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * Load file or directory resource for Cloudinary.
    */
   protected function loadResource($uri, $reset = TRUE) {
+    static $resources;
+    if (isset($resources[$uri])) {
+      return $resources[$uri];
+    }
+
     // Process image style.
     $paths = $this->imageStylePaths($uri);
     if (!empty($paths)) {
@@ -175,6 +180,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
         $resource = array_merge($resource, $dimensions);*/
 
         $data['sign_url'] = TRUE;
+        $data['type'] = $resource['type'];
 
         // As the Cloudinary::cloudinary_url method indicates, it is
         // destructive with the options. We want to use the same data later.
@@ -196,10 +202,17 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
     }
     elseif (!$this->resource || $reset) {
       $public_id = $this->getPublicId($uri);
-      $this->resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_RAW));
+      if ($this->resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE, 'type' => 'private'))) {
+        // Use Private image.
+      } elseif ($this->resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE, 'type' => 'public'))) {
+        // Use Public image.
+      } elseif ($this->resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_RAW))) {
+        // Use raw image.
+      }
     }
+    $resources[$uri] = $this->resource;
 
-    return $this->resource;
+    return $resources[$uri];
   }
 
   /**
