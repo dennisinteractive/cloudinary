@@ -1,0 +1,24 @@
+cloudinary_sdk.settings:
+  type: config_object
+  label: 'Cloudinary SDK Settings'
+  mapping:
+    cloudinary_sdk_cloud_name:
+      label: 'Cloud Name'
+      type: string
+    cloudinary_sdk_api_key:
+      label: 'API Key'
+      type: string
+    cloudinary_sdk_api_secret:
+      label: 'API Secret'
+      type: string
+    cloudinary_stream_wrapper_logging:
+      label: 'Stream Wrapper Logging'
+      type: integer
+    cloudinary_storage_default:
+      label: 'Default Storage'
+      type: string
+    cloudinary_stream_wrapper_folders:
+      label: 'Stream Wrapper Folders'
+      type: sequence
+      sequence:
+        type: integer

@@ -23,7 +23,7 @@ function cloudinary_storage_db_schema() {
     'fields' => array(
       'public_id' => array(
         'description' => 'The public_id of Cloudinary file.',
-        'type' => 'varchar',
+        'type' => 'varchar_ascii',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
@@ -42,7 +42,7 @@ function cloudinary_storage_db_schema() {
         'not null' => FALSE,
       ),
     ),
-    'primary key' => array(array('public_id', 100)),
+    'primary key' => ['public_id'],
   );
 
   return $schema;

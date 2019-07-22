@@ -93,6 +93,12 @@ function cloudinary_preprocess_image_style_preview(&$variables) {
     $data = [];
   }
 
+  // Unset named transformations since they are specific to Cloudinary accounts,
+  // and will not work with a demo sandbox.
+  if (isset($data['transformation'])) {
+    unset($data['transformation']);
+  }
+
   $trans = \Cloudinary::generate_transformation_string($data);
   $preview = CLOUDINARY_PREVIEW_IMAGE_PREFIX . $trans . '/sample.jpg';
   $variables['derivative']['rendered']['#uri'] = $preview;
@@ -171,6 +177,11 @@ function cloudinary_cloudinary_stream_wrapper_transformation() {
     'cloudinary_crop' => [
       'title' => t('Cloudinary crop'),
       'callback' => 'cloudinary_transformation_cloudinary_crop',
+      'file' => $path . '/includes/cloudinary.transformation.cloudinary.inc',
+    ],
+    'cloudinary_named_transformation' => [
+      'title' => t('Cloudinary named transformation'),
+      'callback' => 'cloudinary_transformation_cloudinary_named_transformation',
       'file' => $path . '/includes/cloudinary.transformation.cloudinary.inc',
     ],
     'image_crop' => [

@@ -1,6 +1,15 @@
 cloudinary.settings:
-  type: mapping
+  type: config_object
   label: Settings
   mapping:
-    cloudinary_image_style_preview_image:
+    image_style_preview_image:
       type: boolean
+      label: "Preview Image"
+
+image.effect.cloudinary_named_transformation:
+  type: image_size
+  label: 'Cloudinary named transformation'
+  mapping:
+    transformation:
+      label: 'Transformation'
+      type: string
