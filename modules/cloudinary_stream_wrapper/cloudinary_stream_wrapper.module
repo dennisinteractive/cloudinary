@@ -319,9 +319,10 @@ function cloudinary_stream_wrapper_resource_folder_structure($path, $folders = a
  */
 function cloudinary_stream_wrapper_create_file($base64_data, $options) {
   try {
-    $options['api_key'] = \Drupal::config('cloudinary_sdk.settings')->get('cloudinary_sdk_api_key');
-    $options['api_secret'] = \Drupal::config('cloudinary_sdk.settings')->get('cloudinary_sdk_api_secret');
-    $options['cloud_name'] = \Drupal::config('cloudinary_sdk.settings')->get('cloudinary_sdk_cloud_name');
+    $state = \Drupal::getContainer()->get('state');
+    $options['api_key'] = $state->get('cloudinary_sdk_api_key');
+    $options['api_secret'] = $state->get('cloudinary_sdk_api_secret');
+    $options['cloud_name'] = $state->get('cloudinary_sdk_cloud_name');
     // Allow change of the options in the very last moment before upload.
     \Drupal::moduleHandler()->alter('cloudinary_stream_wrapper_options', $options);
     $data = (array) \Cloudinary\Uploader::upload($base64_data, $options);

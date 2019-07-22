@@ -196,18 +196,15 @@ function cloudinary_storage_form_cloudinary_sdk_settings_alter(&$form, $form_sta
  * Submit for the cloudinary_sdk_settings() form.
  */
 function cloudinary_storage_settings_submit($form, &$form_state) {
+  $state = \Drupal::getContainer()->get('state');
   $c_storage = \Drupal::config('cloudinary_storage.settings')->get('cloudinary_storage_default');
   $storage = $form_state->getValue(['cloudinary_storage_default']);
 
-  $c_cloud_name = \Drupal::config('cloudinary_sdk.settings')->get('cloudinary_sdk_cloud_name');
+  $c_cloud_name = $state->get('cloudinary_sdk_cloud_name');
   $cloud_name = $form_state->getValue(['cloudinary_sdk_cloud_name']);
 
   $sdk_config = \Drupal::service('config.factory')->getEditable('cloudinary_storage.settings');
   $sdk_config->set('cloudinary_storage_default', $storage);
-  $sdk_config->save();
-
-  $sdk_config = \Drupal::service('config.factory')->getEditable('cloudinary_sdk.settings');
-  $sdk_config->set('cloudinary_sdk_cloud_name', $cloud_name);
   $sdk_config->save();
 
   // Clear storage if storage method or cloud name changed.
