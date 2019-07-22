@@ -87,4 +87,3 @@ function cloudinary_sdk_update_8001() {
   }
   $config->save(TRUE);
 }
-
