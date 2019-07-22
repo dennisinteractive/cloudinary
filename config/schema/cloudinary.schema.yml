@@ -4,3 +4,11 @@ cloudinary.settings:
   mapping:
     cloudinary_image_style_preview_image:
       type: boolean
+
+image.effect.cloudinary_named_transformation:
+  type: image_size
+  label: 'Cloudinary named transformation'
+  mapping:
+    transformation:
+      label: 'Transformation'
+      type: string
