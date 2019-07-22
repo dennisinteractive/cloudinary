@@ -206,6 +206,11 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * Get file stream data from Cloudinary by http url.
    */
   protected function streamReadCloudinary() {
+    static $data;
+    if (isset($data[$this->uri])) {
+      return $data[$this->uri];
+    }
+
     $resource = $this->loadResource($this->uri);
     if (!$resource || empty($resource['url'])) {
       return FALSE;
@@ -215,13 +220,13 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
       $client = \Drupal::httpClient();
       $request = $client->request('GET', $resource['url']);
       // Expected result.
-      $data = $request->getBody();
+      $data[$this->uri] = $request->getBody();
     }
     catch (\Exception $e) {
       watchdog_exception('cloudinary_stream_wrapper', $e);
     }
 
-    return $data;
+    return $data[$this->uri];
   }
 
   /**
