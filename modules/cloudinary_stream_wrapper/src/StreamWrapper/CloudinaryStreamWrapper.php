@@ -137,10 +137,10 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * Load file or directory resource for Cloudinary.
    */
   protected function loadResource($uri, $reset = TRUE) {
-    static $resources;
-    if (isset($resources[$uri])) {
-      return $resources[$uri];
-    }
+//    static $resources;
+//    if (isset($resources[$uri])) {
+//      return $resources[$uri];
+//    }
 
     // Process image style.
     $paths = $this->imageStylePaths($uri);
@@ -219,10 +219,10 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * Get file stream data from Cloudinary by http url.
    */
   protected function streamReadCloudinary() {
-    static $data;
-    if (isset($data[$this->uri])) {
-      return $data[$this->uri];
-    }
+//    static $data;
+//    if (isset($data[$this->uri])) {
+//      return $data[$this->uri];
+//    }
 
     $resource = $this->loadResource($this->uri);
     if (!$resource || empty($resource['url'])) {
