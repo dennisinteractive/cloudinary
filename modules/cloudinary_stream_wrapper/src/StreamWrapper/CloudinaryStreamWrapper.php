@@ -58,7 +58,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
   /**
    * List of files in a given directory.
    */
-  protected $directoryList = array();
+  protected $directoryList = [];
 
   /**
    * A current file resource of Cloudinary.
@@ -156,7 +156,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
       if (in_array('sample.png', $paths) && strpos($uri, 'styles')) {
         $public_id = 'styles/' . $style_name . '/' . $scheme . '/' . $public_id;
       }
-      $resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE));
+      $resource = cloudinary_stream_wrapper_resource($public_id, ['resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE]);
 
       if (!$resource || $resource['mode'] != CLOUDINARY_STREAM_WRAPPER_FILE) {
         return FALSE;
@@ -202,11 +202,11 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
     }
     elseif (!$this->resource || $reset) {
       $public_id = $this->getPublicId($uri);
-      if ($this->resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE, 'type' => 'private'))) {
+      if ($this->resource = cloudinary_stream_wrapper_resource($public_id, ['resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE, 'type' => 'private'])) {
         // Use Private image.
-      } elseif ($this->resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE, 'type' => 'public'))) {
+      } elseif ($this->resource = cloudinary_stream_wrapper_resource($public_id, ['resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_IMAGE, 'type' => 'public'])) {
         // Use Public image.
-      } elseif ($this->resource = cloudinary_stream_wrapper_resource($public_id, array('resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_RAW))) {
+      } elseif ($this->resource = cloudinary_stream_wrapper_resource($public_id, ['resource_type' => CLOUDINARY_STREAM_WRAPPER_RESOURCE_RAW])) {
         // Use raw image.
       }
     }
@@ -257,7 +257,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
       return FALSE;
     }
 
-    $stat = array();
+    $stat = [];
     $stat[0] = $stat['dev'] = 0;
     $stat[1] = $stat['ino'] = 0;
     $stat[2] = $stat['mode'] = $resource['mode'];
@@ -280,7 +280,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    */
   protected function flush() {
     $this->folderName = NULL;
-    $this->directoryList = array();
+    $this->directoryList = [];
     $this->streamData = NULL;
     $this->streamPointer = 0;
     $this->streamWrite = FALSE;
@@ -701,11 +701,11 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
         $dirname = '';
       }
 
-      $options = array(
+      $options = [
         'public_id' => $public_id,
         'resource_type' => $this->resourceType,
         'tags' => CLOUDINARY_STREAM_WRAPPER_FOLDER_TAG_PREFIX . $dirname,
-      );
+      ];
 
       if (cloudinary_stream_wrapper_create_file($base64_data, $options)) {
         // Unset resource of static variables after new file uploaded.
@@ -943,7 +943,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
     $resource = $this->loadResource($uri);
 
     if ($resource) {
-      $list = array('.', '..');
+      $list = ['.', '..'];
 
       if (isset($this->resource['folders']) && !empty($this->resource['folders'])) {
         $list = array_merge($list, $this->resource['folders']);
@@ -1009,7 +1009,7 @@ class CloudinaryStreamWrapper implements StreamWrapperInterface {
    * @see http://php.net/manual/streamwrapper.dir-closedir.php
    */
   public function dir_closedir() {
-    $this->directoryList = array();
+    $this->directoryList = [];
 
     return TRUE;
   }

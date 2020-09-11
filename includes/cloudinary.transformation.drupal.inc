@@ -10,7 +10,7 @@
  */
 function cloudinary_transformation_image_crop($effect, $exist_effect, $resource)
 {
-    $search = array(
+    $search = [
         'left-top',
         'center-top',
         'right-top',
@@ -20,8 +20,8 @@ function cloudinary_transformation_image_crop($effect, $exist_effect, $resource)
         'left-bottom',
         'center-bottom',
         'right-bottom',
-    );
-    $replace = array(
+    ];
+    $replace = [
         'north_west',
         'north',
         'north_east',
@@ -31,7 +31,7 @@ function cloudinary_transformation_image_crop($effect, $exist_effect, $resource)
         'south_west',
         'south',
         'south_east',
-    );
+    ];
     $anchor = str_replace($search, $replace, $effect['data']['anchor']);
     $effect['data']['gravity'] = $anchor;
     unset($effect['data']['anchor']);
@@ -43,7 +43,7 @@ function cloudinary_transformation_image_crop($effect, $exist_effect, $resource)
     $src_width = $resource['width'];
     $src_height = $resource['height'];
     // Init crop data.
-    $crop_data = array();
+    $crop_data = [];
     // Set image background with black.
     $effect['data']['background'] = '#000';
     // If destination width & height large than original, mpad.
@@ -53,12 +53,12 @@ function cloudinary_transformation_image_crop($effect, $exist_effect, $resource)
     // If destination width large, height small;
     // Crop with original width & destination height;
     elseif ($dst_width > $src_width && $dst_height <= $src_height) {
-        $crop_data = array('width' => $src_width, 'height' => $dst_height);
+        $crop_data = ['width' => $src_width, 'height' => $dst_height];
     }
     // If destination width small, height large;
     // Crop with destination width & original height;
     elseif ($dst_width <= $src_width && $dst_height > $src_height) {
-        $crop_data = array('width' => $dst_width, 'height' => $src_height);
+        $crop_data = ['width' => $dst_width, 'height' => $src_height];
     }
     // Unset background attribute.
     else {
@@ -67,18 +67,18 @@ function cloudinary_transformation_image_crop($effect, $exist_effect, $resource)
     // Add crop mode first if have crop data;
     // Add pad mode with destination size and black background.
     if (!empty($crop_data)) {
-        $data = array(
+        $data = [
             'type' => CLOUDINARY_STREAM_WRAPPER_TRANSFORMATION_MULTIPLE,
-            'data' => array(
-                cloudinary_transformation_image($crop_data, array('crop' => 'crop')),
-                cloudinary_transformation_image($effect['data'], array('crop' => 'pad')),
-            ),
-        );
+            'data' => [
+                cloudinary_transformation_image($crop_data, ['crop' => 'crop']),
+                cloudinary_transformation_image($effect['data'], ['crop' => 'pad']),
+            ],
+        ];
 
         return $data;
     }
 
-    return cloudinary_transformation_image($effect['data'], array('crop' => $crop));
+    return cloudinary_transformation_image($effect['data'], ['crop' => $crop]);
 }
 
 /**
@@ -92,7 +92,7 @@ function cloudinary_transformation_image_desaturate($effect, $exist_effect, $res
         return false;
     }
 
-    return cloudinary_transformation_image($effect['data'], array('effect' => 'grayscale'));
+    return cloudinary_transformation_image($effect['data'], ['effect' => 'grayscale']);
 }
 
 /**

@@ -19,7 +19,7 @@ function hook_cloudinary_stream_wrapper_resource_create(array $resource) {
     if ($storage_class = cloudinary_storage_class()) {
       $storage = new $storage_class($resource);
       list($path, $file) = $storage->resourceUpdate();
-      $data = array(CLOUDINARY_STORAGE_NEW => $file);
+      $data = [CLOUDINARY_STORAGE_NEW => $file];
 
       if ($resource['mode'] == CLOUDINARY_STREAM_WRAPPER_FILE) {
         $storage->folderUpdate($path, $data);
@@ -53,15 +53,15 @@ function hook_cloudinary_stream_wrapper_resource_rename(array $src_resource, arr
     list($dst_path, $dst_file) = $dst_storage->resourceUpdate();
 
     if ($src_path !== FALSE && $src_path == $dst_path) {
-      $src_storage->folderUpdate($src_path, array(CLOUDINARY_STORAGE_NEW => $dst_file, CLOUDINARY_STORAGE_REMOVE => $src_file));
+      $src_storage->folderUpdate($src_path, [CLOUDINARY_STORAGE_NEW => $dst_file, CLOUDINARY_STORAGE_REMOVE => $src_file]);
     }
     else {
       if ($src_path !== FALSE) {
-        $src_storage->folderUpdate($src_path, array(CLOUDINARY_STORAGE_REMOVE => $src_file));
+        $src_storage->folderUpdate($src_path, [CLOUDINARY_STORAGE_REMOVE => $src_file]);
       }
 
       if ($dst_path !== FALSE) {
-        $dst_storage->folderUpdate($dst_path, array(CLOUDINARY_STORAGE_NEW => $dst_file));
+        $dst_storage->folderUpdate($dst_path, [CLOUDINARY_STORAGE_NEW => $dst_file]);
       }
     }
   }
@@ -121,7 +121,7 @@ function hook_cloudinary_stream_wrapper_resource_delete(array $resource) {
       list($path, $file) = $storage->resourceUpdate(FALSE);
 
       if ($resource['mode'] == CLOUDINARY_STREAM_WRAPPER_FILE) {
-        $storage->folderUpdate($path, array(CLOUDINARY_STORAGE_REMOVE => $file));
+        $storage->folderUpdate($path, [CLOUDINARY_STORAGE_REMOVE => $file]);
       }
     }
   }
@@ -142,13 +142,13 @@ function hook_cloudinary_stream_wrapper_resource_delete(array $resource) {
 function hook_cloudinary_stream_wrapper_transformation() {
   $path = drupal_get_path('module', 'cloudinary');
 
-  return array(
-    'image_crop' => array(
+  return [
+    'image_crop' => [
       'title' => t('Crop'),
       'callback' => 'cloudinary_transformation_image_crop',
       'file' => $path . '/includes/cloudinary.transformation.drupal.inc',
-    ),
-  );
+    ],
+  ];
 }
 
 /**
