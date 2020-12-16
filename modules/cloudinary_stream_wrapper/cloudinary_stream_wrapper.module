@@ -325,6 +325,12 @@ function cloudinary_stream_wrapper_create_file($base64_data, $options) {
     $options['cloud_name'] = $state->get('cloudinary_sdk_cloud_name');
     // Allow change of the options in the very last moment before upload.
     \Drupal::moduleHandler()->alter('cloudinary_stream_wrapper_options', $options);
+    // Fix issue with double dots on .jpeg
+    if (!empty($base64_data) && strpos($base64_data, '.jpeg') !== NULL) {
+      if (!empty($options['public_id'])) {
+        $options['public_id'] = rtrim($options['public_id'], '.');
+      }
+    }
     $data = (array) \Cloudinary\Uploader::upload($base64_data, $options);
     $resource = cloudinary_stream_wrapper_resource_file_structure($data);
     \Drupal::moduleHandler()->invokeAll('cloudinary_stream_wrapper_resource_create', [$resource]);
