@@ -1,7 +1,7 @@
 name: 'Cloudinary Storage Database'
 description: 'The module provides stores information in database for uploaded Cloudinary files.'
 package: Cloudinary
-core: 8.x
+core_version_requirement: ^8.8 || ^9
 dependencies:
   - cloudinary_storage
   - cloudinary

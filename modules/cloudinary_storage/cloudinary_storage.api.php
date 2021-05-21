@@ -14,12 +14,12 @@
  *   more detial see exist cloudinary storage sub modules.
  */
 function hook_cloudinary_storage_info() {
-  return array(
-    'cloudinary_storage_name' => array(
+  return [
+    'cloudinary_storage_name' => [
       'title' => t('Name'),
       'class' => 'CloudinaryStorageName',
-    ),
-  );
+    ],
+  ];
 }
 
 /**

@@ -31,7 +31,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
     }
 
     if (!$image->rotate($this->configuration['degrees'], $this->configuration['bgcolor'])) {
-      $this->logger->error('Image rotate failed using the %toolkit toolkit on %path (%mimetype, %dimensions)', array('%toolkit' => $image->getToolkitId(), '%path' => $image->getSource(), '%mimetype' => $image->getMimeType(), '%dimensions' => $image->getWidth() . 'x' . $image->getHeight()));
+      $this->logger->error('Image rotate failed using the %toolkit toolkit on %path (%mimetype, %dimensions)', ['%toolkit' => $image->getToolkitId(), '%path' => $image->getSource(), '%mimetype' => $image->getMimeType(), '%dimensions' => $image->getWidth() . 'x' . $image->getHeight()]);
       return FALSE;
     }
     return TRUE;
@@ -58,10 +58,10 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
    * {@inheritdoc}
    */
   public function getSummary() {
-    $summary = array(
+    $summary = [
       '#theme' => 'image_rotate_summary',
       '#data' => $this->configuration,
-    );
+    ];
     $summary += parent::getSummary();
 
     return $summary;
@@ -71,7 +71,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'width' => NULL,
       'height' => NULL,
       'crop' => NULL,
@@ -93,17 +93,17 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
       'default_image' => NULL,
       'quality' => NULL,
       'fetch_format' => NULL,
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $container = array(
+    $container = [
       '#prefix' => '<div class="container-inline clearfix">',
       '#suffix' => '</div>',
-    );
+    ];
 
     $form['#attached']['library'] = [
       'core/ui.slider',
@@ -111,262 +111,262 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
       'cloudinary/cloudinary-lib',
     ];
 
-    $form['cloudinary'] = array();
+    $form['cloudinary'] = [];
 
     // Show the thumbnail preview.
-    $form['cloudinary']['preview'] = array(
+    $form['cloudinary']['preview'] = [
       '#prefix' => '<div class="clearfix">',
       '#suffix' => '</div>',
       '#tree' => FALSE,
-    );
+    ];
 
     $preview = $this->cloudinaryCropFormPreview();
-    $form['cloudinary']['preview']['thumbnail'] = array(
+    $form['cloudinary']['preview']['thumbnail'] = [
       '#prefix' => '<div id="cloudinary_transformation_preview">',
       '#suffix' => '</div>',
       '#type' => 'item',
       '#title' => $this->t('Preview'),
       '#markup' => render($preview),
-    );
+    ];
 
-    $form['cloudinary']['preview']['reset'] = array(
+    $form['cloudinary']['preview']['reset'] = [
       '#value' => $this->t('Reset'),
       '#type' => 'button',
-    );
+    ];
 
-    $form['cloudinary']['preview']['preview'] = array(
+    $form['cloudinary']['preview']['preview'] = [
       '#value' => $this->t('Preview'),
       '#type' => 'button',
-      '#ajax' => array(
+      '#ajax' => [
         'callback' => 'cloudinary_crop_form_preview_callback',
         'wrapper' => 'cloudinary_transformation_preview',
-      ),
-    );
+      ],
+    ];
 
-    $form['cloudinary']['resize_crop'] = array(
+    $form['cloudinary']['resize_crop'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Resize & Crop'),
-    );
+    ];
 
     $form['cloudinary']['resize_crop']['one'] = $container;
 
-    $form['cloudinary']['resize_crop']['one']['width'] = array(
+    $form['cloudinary']['resize_crop']['one']['width'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'width'),
+      '#parents' => ['data', 'width'],
       '#title' => $this->t('Width'),
       '#default_value' => $this->configuration['width'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider')),
-    );
+      '#attributes' => ['class' => ['input_slider']],
+    ];
 
-    $form['cloudinary']['resize_crop']['one']['height'] = array(
+    $form['cloudinary']['resize_crop']['one']['height'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'height'),
+      '#parents' => ['data', 'height'],
       '#title' => $this->t('Height'),
       '#default_value' => $this->configuration['height'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider')),
-    );
+      '#attributes' => ['class' => ['input_slider']],
+    ];
 
-    $form['cloudinary']['resize_crop']['one']['crop'] = array(
+    $form['cloudinary']['resize_crop']['one']['crop'] = [
       '#type' => 'select',
-      '#parents' => array('data', 'crop'),
+      '#parents' => ['data', 'crop'],
       '#title' => $this->t('Mode'),
       '#default_value' => $this->configuration['crop'],
       '#options' => _cloudinary_options_crop(),
-    );
+    ];
 
     $form['cloudinary']['resize_crop']['two'] = $container;
 
-    $form['cloudinary']['resize_crop']['two']['gravity'] = array(
+    $form['cloudinary']['resize_crop']['two']['gravity'] = [
       '#type' => 'select',
-      '#parents' => array('data', 'gravity'),
+      '#parents' => ['data', 'gravity'],
       '#title' => $this->t('Gravity'),
       '#default_value' => $this->configuration['gravity'],
       '#options' => $this->getGravityOptions(),
-      '#states' => array(
-        'visible' => array(
+      '#states' => [
+        'visible' => [
           ':input[name="data[crop]"]' => $this->buildVisibleStates(CLOUDINARY_VISIBLE_STATES_CROP),
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
-    $x_y_states = array('visible' => array(':input[name="data[crop]"]' => array(array('value' => 'crop'))));
-    $form['cloudinary']['resize_crop']['two']['x'] = array(
+    $x_y_states = ['visible' => [':input[name="data[crop]"]' => [['value' => 'crop']]]];
+    $form['cloudinary']['resize_crop']['two']['x'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'x'),
+      '#parents' => ['data', 'x'],
       '#title' => $this->t('X'),
       '#default_value' => $this->configuration['x'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider')),
+      '#attributes' => ['class' => ['input_slider']],
       '#states' => $x_y_states,
-    );
+    ];
 
-    $form['cloudinary']['resize_crop']['two']['y'] = array(
+    $form['cloudinary']['resize_crop']['two']['y'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'y'),
+      '#parents' => ['data', 'y'],
       '#title' => $this->t('Y'),
       '#default_value' => $this->configuration['y'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider')),
+      '#attributes' => ['class' => ['input_slider']],
       '#states' => $x_y_states,
-    );
+    ];
 
-    $form['cloudinary']['shape'] = array(
+    $form['cloudinary']['shape'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Shape'),
-    );
+    ];
 
     $form['cloudinary']['shape']['one'] = $container;
 
-    $form['cloudinary']['shape']['one']['radius'] = array(
+    $form['cloudinary']['shape']['one']['radius'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'radius'),
+      '#parents' => ['data', 'radius'],
       '#title' => $this->t('Corner Radius'),
       '#default_value' => $this->configuration['radius'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider'), 'data' => 'dynamic_0_100_slider-small'),
-    );
+      '#attributes' => ['class' => ['input_slider'], 'data' => 'dynamic_0_100_slider-small'],
+    ];
 
-    $form['cloudinary']['shape']['one']['angle'] = array(
+    $form['cloudinary']['shape']['one']['angle'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'angle'),
+      '#parents' => ['data', 'angle'],
       '#title' => $this->t('Rotation Angle'),
       '#default_value' => $this->configuration['angle'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider'), 'data' => 'fixed_0_360_slider-small'),
-    );
+      '#attributes' => ['class' => ['input_slider'], 'data' => 'fixed_0_360_slider-small'],
+    ];
 
-    $form['cloudinary']['shape']['one']['automatic_rotation'] = array(
+    $form['cloudinary']['shape']['one']['automatic_rotation'] = [
       '#type' => 'checkbox',
-      '#parents' => array('data', 'automatic_rotation'),
+      '#parents' => ['data', 'automatic_rotation'],
       '#title' => $this->t('Automatic rotation'),
       '#default_value' => $this->configuration['automatic_rotation'],
-    );
+    ];
 
     $form['cloudinary']['shape']['two'] = $container;
 
-    $form['cloudinary']['shape']['two']['angles'] = array(
+    $form['cloudinary']['shape']['two']['angles'] = [
       '#type' => 'checkboxes',
-      '#parents' => array('data', 'angles'),
+      '#parents' => ['data', 'angles'],
       '#title' => $this->t('Angles'),
       '#title_display' => 'invisible',
       '#default_value' => $this->configuration['angles'],
       '#options' => _cloudinary_options_angles(),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="data[automatic_rotation]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
+      '#states' => [
+        'visible' => [
+          ':input[name="data[automatic_rotation]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
 
-    $form['cloudinary']['look_feel'] = array(
+    $form['cloudinary']['look_feel'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Look & Feel'),
-    );
+    ];
 
     $form['cloudinary']['look_feel']['one'] = $container;
 
-    $form['cloudinary']['look_feel']['one']['effect'] = array(
+    $form['cloudinary']['look_feel']['one']['effect'] = [
       '#type' => 'select',
-      '#parents' => array('data', 'effect'),
+      '#parents' => ['data', 'effect'],
       '#title' => $this->t('Effect'),
       '#default_value' => $this->configuration['effect'],
       '#options' => _cloudinary_options_effect(),
-    );
+    ];
 
-    $form['cloudinary']['look_feel']['one']['effects_param'] = array(
+    $form['cloudinary']['look_feel']['one']['effects_param'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'effects_param'),
+      '#parents' => ['data', 'effects_param'],
       '#title_display' => 'invisible',
       '#title' => $this->t('Effects Param'),
       '#default_value' => $this->configuration['effects_param'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider'), 'data' => 'fixed_0_100_slider-small'),
-      '#states' => array(
-        'visible' => array(
+      '#attributes' => ['class' => ['input_slider'], 'data' => 'fixed_0_100_slider-small'],
+      '#states' => [
+        'visible' => [
           ':input[name="data[effect]"]' => $this->buildVisibleStates(CLOUDINARY_VISIBLE_STATES_EFFECT),
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
-    $form['cloudinary']['more'] = array(
+    $form['cloudinary']['more'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('More Options'),
-    );
+    ];
 
-    $form['cloudinary']['more']['one'] = array(
+    $form['cloudinary']['more']['one'] = [
       '#prefix' => '<div id="farbtastic-color"></div><div class="container-inline clearfix">',
       '#suffix' => '</div>',
-    );
+    ];
 
-    $form['cloudinary']['more']['one']['opacity'] = array(
+    $form['cloudinary']['more']['one']['opacity'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'opacity'),
+      '#parents' => ['data', 'opacity'],
       '#title' => $this->t('Opacity'),
       '#default_value' => $this->configuration['opacity'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider'), 'data' => 'fixed_0_100_slider-small'),
-    );
+      '#attributes' => ['class' => ['input_slider'], 'data' => 'fixed_0_100_slider-small'],
+    ];
 
-    $form['cloudinary']['more']['one']['border_width'] = array(
+    $form['cloudinary']['more']['one']['border_width'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'border_width'),
+      '#parents' => ['data', 'border_width'],
       '#title' => $this->t('Border'),
       '#default_value' => $this->configuration['border_width'],
       '#size' => 4,
-      '#attributes' => array('class' => array('input_slider'), 'data' => 'dynamic_0_100_slider-small'),
-    );
+      '#attributes' => ['class' => ['input_slider'], 'data' => 'dynamic_0_100_slider-small'],
+    ];
 
-    $form['cloudinary']['more']['one']['border_color'] = array(
+    $form['cloudinary']['more']['one']['border_color'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'border_color'),
+      '#parents' => ['data', 'border_color'],
       '#title' => $this->t('Border color'),
       '#default_value' => $this->configuration['border_color'],
       '#size' => 8,
       '#maxlength' => 7,
-      '#attributes' => array('class' => array('input_color')),
-    );
+      '#attributes' => ['class' => ['input_color']],
+    ];
 
-    $form['cloudinary']['more']['one']['background'] = array(
+    $form['cloudinary']['more']['one']['background'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'background'),
+      '#parents' => ['data', 'background'],
       '#title' => $this->t('Background'),
       '#default_value' => $this->configuration['background'],
       '#size' => 8,
       '#maxlength' => 7,
-      '#attributes' => array('class' => array('input_color')),
-    );
+      '#attributes' => ['class' => ['input_color']],
+    ];
 
-    $form['cloudinary']['more']['one']['default_image'] = array(
+    $form['cloudinary']['more']['one']['default_image'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'default_image'),
+      '#parents' => ['data', 'default_image'],
       '#title' => t('Default Image'),
       '#default_value' => $this->configuration['default_image'],
       '#size' => 15,
       '#maxlength' => 15,
-      '#attributes' => array('class' => array('default_image')),
-    );
+      '#attributes' => ['class' => ['default_image']],
+    ];
 
-    $form['cloudinary']['more']['one']['quality'] = array(
+    $form['cloudinary']['more']['one']['quality'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'quality'),
+      '#parents' => ['data', 'quality'],
       '#title' => t('Image Optimization'),
       '#default_value' => $this->configuration['quality'],
       '#size' => 15,
       '#maxlength' => 15,
-      '#attributes' => array('class' => array('quality')),
-    );
+      '#attributes' => ['class' => ['quality']],
+    ];
 
-    $form['cloudinary']['more']['one']['fetch_format'] = array(
+    $form['cloudinary']['more']['one']['fetch_format'] = [
       '#type' => 'textfield',
-      '#parents' => array('data', 'fetch_format'),
+      '#parents' => ['data', 'fetch_format'],
       '#title' => t('Fetch format'),
       '#default_value' => $this->configuration['fetch_format'],
       '#size' => 15,
       '#maxlength' => 15,
-      '#attributes' => array('class' => array('fetch_format')),
-    );
+      '#attributes' => ['class' => ['fetch_format']],
+    ];
 
     return $form;
   }
@@ -375,7 +375,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
    * Build options for gravity.
    */
   protected function getGravityOptions($key = NULL) {
-    $data = array(
+    $data = [
       '' => t('None'),
       'face' => t('Face'),
       'faces' => t('Faces'),
@@ -395,7 +395,7 @@ class CloudinaryCrop extends ConfigurableImageEffectBase {
       'rek_face' => t('ReKognition: Face'),
       'rek_faces' => t('ReKognition: Faces'),
       'rek_eyes' => t('ReKognition: Eyes'),
-    );
+    ];
 
     if (!is_null($key) && isset($data[$key])) {
       return $data[$key];

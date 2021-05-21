@@ -18,32 +18,32 @@ function cloudinary_storage_db_disable() {
  * Implements hook_schema().
  */
 function cloudinary_storage_db_schema() {
-  $schema['cloudinary_storage'] = array(
+  $schema['cloudinary_storage'] = [
     'description' => 'Stores information for uploaded Cloudinary files.',
-    'fields' => array(
-      'public_id' => array(
+    'fields' => [
+      'public_id' => [
         'description' => 'The public_id of Cloudinary file.',
         'type' => 'varchar_ascii',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'mode' => array(
+      ],
+      'mode' => [
         'description' => 'The file mode, file or directory.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'metadata' => array(
+      ],
+      'metadata' => [
         'description' => 'The file metadata.',
         'type' => 'text',
         'serialize' => TRUE,
         'not null' => FALSE,
-      ),
-    ),
+      ],
+    ],
     'primary key' => ['public_id'],
-  );
+  ];
 
   return $schema;
 }
