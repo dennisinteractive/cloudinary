@@ -82,7 +82,7 @@ function cloudinary_preprocess_image_style_preview(&$variables) {
   $variables['style_name'] = $style->label();
 
   // Cache bypass token.
-  $variables['cache_bypass'] = REQUEST_TIME;
+  $variables['cache_bypass'] = \Drupal::time()->getRequestTime();
   // Get sample image path from Cloudinary demo sandbox.
   $original = CLOUDINARY_PREVIEW_IMAGE_PREFIX . 'sample.jpg';
   // Generate image style for provided sample image.

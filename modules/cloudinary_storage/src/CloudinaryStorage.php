@@ -63,7 +63,7 @@ abstract class CloudinaryStorage {
    */
   static protected function prepareFolderData($data, $update) {
     if (empty($data) || !is_array($data)) {
-      $data = array();
+      $data = [];
     }
 
     // Append new file or folder if not exist.
@@ -91,7 +91,7 @@ abstract class CloudinaryStorage {
   /**
    * Update child files or folders in folder resource.
    */
-  public function folderUpdate($path, $file = array(), $folder = array()) {
+  public function folderUpdate($path, $file = [], $folder =[]) {
     if ($path === FALSE) {
       return;
     }
@@ -154,7 +154,7 @@ abstract class CloudinaryStorage {
       }
     }
 
-    return array($path, $file);
+    return [$path, $file];
   }
 
 }

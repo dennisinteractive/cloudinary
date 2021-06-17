@@ -33,17 +33,17 @@ class CloudinarySdkSettingsForm extends FormBase {
     $disabled = FALSE;
 
     if ($status == CloudinarySdkConstantsInterface::CLOUDINARY_SDK_NOT_LOADED) {
-      drupal_set_message($this->t('Please make sure the Cloudinary SDK library is installed in the libraries directory.'), 'error');
+      $this->messenger()->addError($this->t('Please make sure the Cloudinary SDK library is installed in the libraries directory.'));
       if ($error_message) {
-        drupal_set_message($error_message, 'error');
+        $this->messenger()->addError($error_message);
       }
       return;
     }
     elseif ($status == CloudinarySdkConstantsInterface::CLOUDINARY_SDK_OLD_VERSION) {
-      drupal_set_message($this->t('Please make sure the Cloudinary SDK library installed is @version or greater. Current version is @current_version.', [
+      $this->messenger()->addWarning($this->t('Please make sure the Cloudinary SDK library installed is @version or greater. Current version is @current_version.', [
         '@version' => CloudinarySdkConstantsInterface::CLOUDINARY_SDK_MINIMUM_VERSION,
         '@current_version' => $version,
-      ]), 'warning');
+      ]));
       return;
     }
 
@@ -85,11 +85,11 @@ class CloudinarySdkSettingsForm extends FormBase {
       '#disabled' => $disabled,
     ];
 
-    $form['save'] = array(
+    $form['save'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save'),
       '#weight' => 10,
-    );
+    ];
 
     return $form;
   }

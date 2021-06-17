@@ -21,7 +21,7 @@ function cloudinary_transformation_cloudinary_crop($effect, $exist_effect, $reso
     }
     if (isset($data['multiple'])) {
         unset($data['multiple']);
-        $new_data = array('type' => CLOUDINARY_STREAM_WRAPPER_TRANSFORMATION_MULTIPLE, 'data' => array());
+        $new_data = ['type' => CLOUDINARY_STREAM_WRAPPER_TRANSFORMATION_MULTIPLE, 'data' => []];
         foreach ($data as $d) {
             $new_data['data'][] = cloudinary_transformation_image($d);
         }

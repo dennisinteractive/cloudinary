@@ -61,7 +61,7 @@ function cloudinary_storage_cloudinary_stream_wrapper_resource_create($resource)
     if ($storage_class = cloudinary_storage_class()) {
       $storage = new $storage_class($resource);
       list($path, $file) = $storage->resourceUpdate();
-      $data = array(CLOUDINARY_STORAGE_NEW => $file);
+      $data = [CLOUDINARY_STORAGE_NEW => $file];
 
       if ($resource['mode'] == CLOUDINARY_STREAM_WRAPPER_FILE) {
         $storage->folderUpdate($path, $data);
@@ -88,15 +88,15 @@ function cloudinary_storage_cloudinary_stream_wrapper_resource_rename($src_resou
     list($dst_path, $dst_file) = $dst_storage->resourceUpdate();
 
     if ($src_path !== FALSE && $src_path == $dst_path) {
-      $src_storage->folderUpdate($src_path, array(CLOUDINARY_STORAGE_NEW => $dst_file, CLOUDINARY_STORAGE_REMOVE => $src_file));
+      $src_storage->folderUpdate($src_path, [CLOUDINARY_STORAGE_NEW => $dst_file, CLOUDINARY_STORAGE_REMOVE => $src_file]);
     }
     else {
       if ($src_path !== FALSE) {
-        $src_storage->folderUpdate($src_path, array(CLOUDINARY_STORAGE_REMOVE => $src_file));
+        $src_storage->folderUpdate($src_path, [CLOUDINARY_STORAGE_REMOVE => $src_file]);
       }
 
       if ($dst_path !== FALSE) {
-        $dst_storage->folderUpdate($dst_path, array(CLOUDINARY_STORAGE_NEW => $dst_file));
+        $dst_storage->folderUpdate($dst_path, [CLOUDINARY_STORAGE_NEW => $dst_file]);
       }
     }
   }
@@ -138,7 +138,7 @@ function cloudinary_storage_cloudinary_stream_wrapper_resource_delete($resource)
       list($path, $file) = $storage->resourceUpdate(FALSE);
 
       if ($resource['mode'] == CLOUDINARY_STREAM_WRAPPER_FILE) {
-        $storage->folderUpdate($path, array(CLOUDINARY_STORAGE_REMOVE => $file));
+        $storage->folderUpdate($path, [CLOUDINARY_STORAGE_REMOVE => $file]);
       }
     }
   }
@@ -168,25 +168,25 @@ function cloudinary_storage_form_cloudinary_sdk_settings_alter(&$form, $form_sta
     return;
   }
 
-  $options = array();
+  $options = [];
   foreach ($storages as $key => $storage) {
     $options[$key] = $storage['title'];
   }
 
-  $form['storage'] = array(
+  $form['storage'] = [
     '#type' => 'fieldset',
     '#title' => t('Cloudinary storage settings'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#description' => t('Choose one of the storage to reduce network requests and improve loading speed for uploaded Cloudinary files.'),
-  );
+  ];
 
-  $form['storage']['cloudinary_storage_default'] = array(
+  $form['storage']['cloudinary_storage_default'] = [
     '#type' => 'radios',
     '#title' => t('Storage for uploaded cloudinary files'),
     '#options' => $options,
     '#default_value' => \Drupal::config('cloudinary_storage.settings')->get('cloudinary_storage_default'),
-  );
+  ];
 
   // Unshfit exist storage clear checking.
   array_unshift($form['#submit'], 'cloudinary_storage_settings_submit');
